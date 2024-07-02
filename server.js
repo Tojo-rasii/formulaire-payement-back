@@ -2,6 +2,8 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const cors = require('cors');
+const sequelize = require('./config/config');
+
 
 const app = express();
 const port = 3000;
@@ -10,21 +12,13 @@ const port = 3000;
 app.use(cors());
 app.use(bodyParser.json());
 
-// MySQL connection
-const db = mysql.createConnection({
-    host: 'localhost',
-    user: 'root',
-    password: '',  // Remplacez 'password' par votre mot de passe MySQL
-    database: 'husky_bdd'
-});
 
-db.connect(err => {
-    if (err) {
-        console.error('Error connecting to MySQL:', err);
-        return;
-    }
-    console.log('MySQL Connected...');
-});
+//Database connection
+sequelize.sync().then(()=>{
+    console.log('Base de donnee ok');
+  }).catch((error) =>{
+    console.error('Erreur lors de la connexion de la base de donnees:', error);
+  });
 
 // Endpoint to save data
 app.post('/save', (req, res) => {
